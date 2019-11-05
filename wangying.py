@@ -115,6 +115,9 @@ def chanFunt(new_ap, new_st):
         else:
             pass
 
+def get_state(ap):
+    return ap.params['channel'][0], ap.params['txpower'][0]
+
 def topology():
     "Create a network."
     net = Mininet_wifi(controller=Controller, accessPoint=OVSKernelAP,
@@ -194,6 +197,12 @@ def topology():
     print iperf([sta8, h1])
 
     CLI_wifi(net)
+
+    state = [get_state(ap) for ap in [ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8]]
+    print state
+    n_actions = len(state) * 2
+    n_APs = len(state)
+    brain = DeepQNetwork(n_actions, n_APs, param_file= None)
     # second = sleeptime(0, 0, 1)
     #
     # new_rssi = [chanFunt(ap1,sta14),chanFunt(ap2,sta14),chanFunt(ap3,sta14)]
