@@ -231,7 +231,7 @@ class DeepQNetwork:
 
     def saveReplayMemory(self):
         print 'Memory Size: ' + str(len(self.memory))
-        with open('/home/wy/DCRQN-Artificial-Intelligence-Based-Handoff-Management-for-dense-WLANs/saved_networks/replayMemory.pkl', 'wb') as handle:
+        with open('/home/f406/wangyingCode/DCRQN/saved_networks/replayMemory.pkl', 'wb') as handle:
             pickle.dump(self.memory, handle, -1)  # Using the highest protocol available
         pass
 
