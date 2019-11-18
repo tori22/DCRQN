@@ -92,12 +92,12 @@ def handover(sta, ap, wlan):
 #     return reward, nextstate
 
 def step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, h1):
-    print 'state: ' + str(state)
-    print action
-    print type(action)
-    print action.shape
-    print action[0]
-    print type(action[0])
+    # print 'state: ' + str(state)
+    # print action
+    # print type(action)
+    # print action.shape
+    # print action[0]
+    # print type(action[0])
     actionID = np.argmax(action)
     # temp = []
     # action = list(action)
@@ -107,36 +107,36 @@ def step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3
     # temp = np.asarray(temp)
     # actionID = temp.argmax()
     print 'choose action: ' + str(actionID)
-    print type(actionID)
+    # print type(actionID)
     actionID = int(actionID)
-    print actionID
-    print type(actionID)
+    # print actionID
+    # print type(actionID)
     apIndex = actionID / 4
     channel_power_index = actionID % 4
 
-    print 'apIndex:' + str(apIndex)
-    print 'channe_power_index: ' + str(channel_power_index)
+    # print 'apIndex:' + str(apIndex)
+    # print 'channe_power_index: ' + str(channel_power_index)
 
     apArray = [ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8]
     ap = apArray[apIndex]
     if channel_power_index == 0:
-        print ap.params['channel'][0]
+        # print ap.params['channel'][0]
         ap.setChannel(str(int(ap.params['channel'][0])+1), intf=ap.params['wlan'][0])
-        print ap.params['channel'][0]
-        print 'change channel success'
+        # print ap.params['channel'][0]
+        # print 'change channel success'
         state[apIndex*2] = ap.params['channel'][0]
     elif channel_power_index == 1:
-        print ap.params['channel'][0]
+        # print ap.params['channel'][0]
         ap.setChannel(str(int(ap.params['channel'][0]) - 1), intf=ap.params['wlan'][0])
-        print ap.params['channel'][0]
-        print 'change channel success'
+        # print ap.params['channel'][0]
+        # print 'change channel success'
         state[apIndex * 2] = ap.params['channel'][0]
     elif channel_power_index == 1:
-        print ap.params['txpower'][0]
+        # print ap.params['txpower'][0]
         ap.setTxPower(ap.params['txpower'][0] + 1, intf=ap.params['wlan'][0])
         state[apIndex * 2 + 1] = ap.params['txpower'][0]
     else:
-        print ap.params['txpower'][0]
+        # print ap.params['txpower'][0]
         ap.setTxPower(ap.params['txpower'][0] - 1, intf=ap.params['wlan'][0])
         state[apIndex * 2 + 1] = ap.params['txpower'][0]
 
@@ -145,8 +145,8 @@ def step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3
               float(iperf([sta3, h1])), float(iperf([sta4, h1])),
               float(iperf([sta5, h1])), float(iperf([sta6, h1])),
               float(iperf([sta7, h1])), float(iperf([sta8, h1]))]
-    print reward
-    print type(reward[0])
+    # print reward
+    # print type(reward[0])
     return sum(reward)/len(reward), state
 
 def chanFunt(new_ap, new_st):
@@ -250,7 +250,7 @@ def topology():
     # print iperf([sta4, h1])
     # print iperf([sta5, h1])
     # print iperf([sta6, h1])
-    print iperf([sta7, h1])
+    # print iperf([sta7, h1])
     # print iperf([sta8, h1])
 
     # CLI_wifi(net)
@@ -263,17 +263,17 @@ def topology():
     # state = [list(get_state(ap))[0] for ap in [ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8]]
     # print state
     # state = get_state(ap1)
-    print type(state)
-    print state
+    # print type(state)
+    # print state
     n_actions = len(state) * 2
     n_APs = len(state)
     brain = DeepQNetwork(n_actions, n_APs, param_file= None)
     action, q_value = brain.choose_action(state)
-    print 'action: ' + str(action)
-    print 'q_value:' + str(q_value)
+    # print 'action: ' + str(action)
+    # print 'q_value:' + str(q_value)
     reward, nextstate = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, h1)
-    print 'reward: ' + str(reward)
-    print 'q_value: ' + str(nextstate)
+    # print 'reward: ' + str(reward)
+    # print 'q_value: ' + str(nextstate)
     second = sleeptime(0, 0, 1)
     #
     # new_rssi = [chanFunt(ap1,sta14),chanFunt(ap2,sta14),chanFunt(ap3,sta14)]
