@@ -11,8 +11,8 @@ import pandas as pd
 import tensorflow as tf
 import pickle
 import os
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
+# import tensorflow.compat.v1 as tf
+# tf.disable_v2_behavior()
 tf.set_random_seed(1)
 
 OBSERVE = 10.  # timesteps to observe before training
