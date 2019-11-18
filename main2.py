@@ -43,134 +43,36 @@ def iperf(hosts=None, l4Type='TCP', udpBw='10M',
     server.sendInt()
     servout += server.waitOutput()
     debug('Server output: %s\n' % servout)
-    # print servout
     result = [_parseIperf(servout), _parseIperf(cliout)]
     return result[0]
 
-
-def _getreward(station, host):
-    reward_dic = []
-    reward_dic.append(iperf([station, host], l4Type='TCP', seconds=0.00001, port=6001))
-    # print reward_dic[-1]
-
-    return reward_dic[-1]
-    # if len(reward_dic) == 3:
-        # print reward_dic[-1]
-        # return reward_dic[-1]
-        # sum(reward_dic)/len(reward_dict)
-
-
-def handover(sta, ap, wlan):
-    changeAP = True
-    """Association Control: mechanisms that optimize the use of the APs"""
-    if sta.params['associatedTo'][wlan] == '' or changeAP == True:
-        if ap not in sta.params['associatedTo']:
-            cls = Association
-            # debug('iwconfig %s essid %s ap %s\n' % (sta.params['wlan'][wlan], ap.params['ssid'][0], \
-            #                                           ap.params['mac'][0]))
-            # sta.pexec('iwconfig %s essid %s ap %s' % (sta.params['wlan'][wlan], ap.params['ssid'][0], \
-            #                                           ap.params['mac'][0])
-            # cls.associate_noEncrypt(sta, ap, wlan)
-            # mobility.updateAssociation(sta, ap, wlan)
-            cls.update(sta, ap, wlan)
-
-
-# def step(currentID, action, sta14, ap1, ap2, ap3, h1):
-#     actionID = action.argmax()
-#     n_APs = 3
-#
-#     if actionID != currentID and actionID <= n_APs:
-#         if actionID==0:
-#             handover(sta14, ap1, 0)
-#         elif actionID==1:
-#             handover(sta14, ap2, 0)
-#         elif actionID==2:
-#             handover(sta14, ap3, 0)
-#     reward = _getreward(sta14, h1)
-#     nextstate = [chanFunt(ap1, sta14), chanFunt(ap2, sta14), chanFunt(ap3, sta14)]
-#
-#     return reward, nextstate
-
 def step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, h1):
-    # print 'state: ' + str(state)
-    # print action
-    # print type(action)
-    # print action.shape
-    # print action[0]
-    # print type(action[0])
     actionID = np.argmax(action)
-    # temp = []
-    # action = list(action)
-    # for i in action:
-    #     temp.append(int(i))
-    # print temp
-    # temp = np.asarray(temp)
-    # actionID = temp.argmax()
     print 'choose action: ' + str(actionID)
-    # print type(actionID)
     actionID = int(actionID)
-    # print actionID
-    # print type(actionID)
     apIndex = actionID / 4
     channel_power_index = actionID % 4
-
-    # print 'apIndex:' + str(apIndex)
-    # print 'channe_power_index: ' + str(channel_power_index)
 
     apArray = [ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8]
     ap = apArray[apIndex]
     if channel_power_index == 0:
-        # print ap.params['channel'][0]
         ap.setChannel(str(int(ap.params['channel'][0])+1), intf=ap.params['wlan'][0])
-        # print ap.params['channel'][0]
-        # print 'change channel success'
         state[apIndex*2] = ap.params['channel'][0]
     elif channel_power_index == 1:
-        # print ap.params['channel'][0]
         ap.setChannel(str(int(ap.params['channel'][0]) - 1), intf=ap.params['wlan'][0])
-        # print ap.params['channel'][0]
-        # print 'change channel success'
         state[apIndex * 2] = ap.params['channel'][0]
     elif channel_power_index == 1:
-        # print ap.params['txpower'][0]
         ap.setTxPower(ap.params['txpower'][0] + 1, intf=ap.params['wlan'][0])
         state[apIndex * 2 + 1] = ap.params['txpower'][0]
     else:
-        # print ap.params['txpower'][0]
         ap.setTxPower(ap.params['txpower'][0] - 1, intf=ap.params['wlan'][0])
         state[apIndex * 2 + 1] = ap.params['txpower'][0]
-
 
     reward = [float(iperf([sta1, h1])), float(iperf([sta2, h1])),
               float(iperf([sta3, h1])), float(iperf([sta4, h1])),
               float(iperf([sta5, h1])), float(iperf([sta6, h1])),
               float(iperf([sta7, h1])), float(iperf([sta8, h1]))]
-    # print reward
-    # print type(reward[0])
     return sum(reward)/len(reward), state
-
-def chanFunt(new_ap, new_st):
-    """collect rssi from aps to station
-       :param new_ap: access point
-       :param new_st: station
-    """
-    APS = ['ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6', 'ap7', 'ap8', 'ap9']
-    for number in APS:
-        if number == str(new_ap):
-            indent = 0
-            for item in new_st.params['apsInRange']:
-                if number in str(item):
-                    for each_item in new_ap.params['stationsInRange']:
-                        if str(new_st) in str(each_item):
-                            return new_ap.params['stationsInRange'][each_item]
-                        else:
-                            pass
-                else:
-                    indent = indent + 1
-            if indent == len(new_st.params['apsInRange']):
-                return 0
-        else:
-            pass
 
 def get_state(ap):
     return ap.params['channel'][0], ap.params['txpower'][0]
@@ -225,7 +127,6 @@ def topology():
     net.addLink(ap7, ap8)
 
     """uncomment to plot graph"""
-    # net.plotGraph(max_x=400, max_y=400)
     net.plotGraph(max_x=250, max_y=150)
 
     net.setMobilityModel(time=0, model='RandomWayPoint', max_x=250, max_y=150,
@@ -244,15 +145,6 @@ def topology():
     ap8.start([c1])
 
     print "*** Running CLI"
-    # print iperf([sta1, h1])
-    # print iperf([sta2, h1])
-    # print iperf([sta3, h1])
-    # print iperf([sta4, h1])
-    # print iperf([sta5, h1])
-    # print iperf([sta6, h1])
-    # print iperf([sta7, h1])
-    # print iperf([sta8, h1])
-
     # CLI_wifi(net)
 
     state = []
@@ -260,32 +152,13 @@ def topology():
         temp = list(get_state(ap))
         state.append(str(temp[0]))
         state.append(str(temp[1]))
-    # state = [list(get_state(ap))[0] for ap in [ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8]]
-    # print state
-    # state = get_state(ap1)
-    # print type(state)
-    # print state
     n_actions = len(state) * 2
     n_APs = len(state)
     brain = DeepQNetwork(n_actions, n_APs, param_file= None)
     action, q_value = brain.choose_action(state)
-    # print 'action: ' + str(action)
-    # print 'q_value:' + str(q_value)
     reward, nextstate = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, h1)
-    # print 'reward: ' + str(reward)
-    # print 'q_value: ' + str(nextstate)
+
     second = sleeptime(0, 0, 1)
-    #
-    # new_rssi = [chanFunt(ap1,sta14),chanFunt(ap2,sta14),chanFunt(ap3,sta14)]
-    # print new_rssi
-    #
-    # n_actions, n_APs = len(new_rssi), len(new_rssi)
-    # brain = DeepQNetwork(n_actions,n_APs,param_file = None)
-    #
-    # state = new_rssi
-    # print 'initial observation:' + str(state)
-    #
-    #
 
     try:
         while True:
@@ -298,29 +171,8 @@ def topology():
         print 'saving replayMemory...'
         brain.saveReplayMemory()
     pass
-    # try:
-        # while True:
-            # time.sleep(second)
-    #         new_rssi = [chanFunt(ap1, sta14), chanFunt(ap2, sta14), chanFunt(ap3, sta14)]
-    # #         # print new_rssi, rssi_tag(sta14)
-    # #         # print _getreward(sta14,h1)
-    # #         # print iperf([sta14, h1], seconds=0.0000001)
-    # #         # print '*********############*'
-    #         action,q_value = brain.choose_action(state)
-    #         reward, nextstate = step(rssi_tag(sta14),action, sta14, ap1, ap2, ap3, h1)
-    # #
-    # #         print 'iperf' + iperf([sta14, h1])
-    # #         print new_rssi
-    #         brain.setPerception(state, action, reward, nextstate)
-    #         state = nextstate
-    # except KeyboardInterrupt:
-    #     print 'saving replayMemory...'
-    #     brain.saveReplayMemory()
-    # pass
-    # # print new_rssi
-    # # snr_dict = map(setSNR,new_rssi)
-    #
-    # print "*** Stopping network"
+
+    print "*** Stopping network"
     net.stop()
 
 if __name__ == '__main__':
