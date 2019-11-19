@@ -236,8 +236,8 @@ class DeepQNetwork:
         pass
 
     def loadReplayMemory(self):
-        if os.path.exists('saved_networks/replayMemory.pkl'):
-            with open('saved_networks/replayMemory.pkl', 'rb') as handle:
+        if os.path.exists('/home/f406/wangyingCode/DCRQN/saved_networks/replayMemory.pkl.pkl'):
+            with open('/home/f406/wangyingCode/DCRQN/saved_networks/replayMemory.pkl', 'rb') as handle:
                 replayMemory = pickle.load(handle)  # Warning: If adding something here, also modifying saveDataset
         else:
             replayMemory = deque()

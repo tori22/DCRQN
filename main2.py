@@ -5,13 +5,13 @@ Setting mechanism to optimize the use of the APs
 """
 
 import time
-
+import math
 from mininet.node import Controller
 from mininet.log import setLogLevel, debug
 from mn_wifi.cli import CLI_wifi
 from mn_wifi.net import Mininet_wifi
 from mn_wifi.node import OVSKernelAP
-from util import _parseIperf, sleeptime, setSNR, loadness, rssi_tag
+from util import _parseIperf, sleeptime, setSNR, loadness, rssi_tag, neighborAp
 from mn_wifi.link import wmediumd
 from mn_wifi.wmediumdConnector import interference
 
@@ -63,16 +63,54 @@ def step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3
         state[apIndex * 2] = ap.params['channel'][0]
     elif channel_power_index == 1:
         ap.setTxPower(ap.params['txpower'][0] + 1, intf=ap.params['wlan'][0])
+        # ap.setRange(ap.params['range']+1, intf=ap.params['wlan'][0])
         state[apIndex * 2 + 1] = ap.params['txpower'][0]
     else:
         ap.setTxPower(ap.params['txpower'][0] - 1, intf=ap.params['wlan'][0])
+        # ap.setRange(ap.params['range'] - 1, intf=ap.params['wlan'][0])
         state[apIndex * 2 + 1] = ap.params['txpower'][0]
 
-    reward = [float(iperf([sta1, h1])), float(iperf([sta2, h1])),
-              float(iperf([sta3, h1])), float(iperf([sta4, h1])),
-              float(iperf([sta5, h1])), float(iperf([sta6, h1])),
-              float(iperf([sta7, h1])), float(iperf([sta8, h1]))]
-    return sum(reward)/len(reward), state
+    # reward = [float(iperf([sta1, h1])), float(iperf([sta2, h1])),
+    #           float(iperf([sta3, h1])), float(iperf([sta4, h1])),
+    #           float(iperf([sta5, h1])), float(iperf([sta6, h1])),
+    #           float(iperf([sta7, h1])), float(iperf([sta8, h1]))]
+    reward = caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8)
+    return reward, state
+
+def caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8):
+    totalReward = 0
+    stationSet = [sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8]
+    apSet = [ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8]
+    for station in stationSet:
+        apIndex = rssi_tag(station)
+        stationPosition = station['position']
+
+        apPositive = apSet[apIndex]
+        apPower = apPositive.params['txpower']
+        apPosition = apPositive.params['position']
+        distance = getDistance(apPosition, stationPosition)
+        channel = apPositive.params['channel'][0]
+        interference = 0
+        neighbors = neighborAp(station)
+        for apIndexNegative in neighbors:
+            if apIndexNegative == apIndex:
+                continue
+            apNegative = apSet[apIndexNegative]
+            channelNegative = apNegative.params['channel'][0]
+            if channelNegative != channel:
+                continue
+            apNegativePower = apNegative.params['txpower']
+            apNegativePosition = apNegative.params['position']
+            distanceNegative = getDistance(apNegativePosition, stationPosition)
+            interference = apNegativePower/distanceNegative
+        totalReward += apPower/distance / (0 + interference)
+    return totalReward
+
+def getDistance(apPosition, stationPosition):
+    x = apPosition[0]-stationPosition[0]
+    y = apPosition[1] - stationPosition[1]
+    z = apPosition[2] - stationPosition[2]
+    return math.sqrt(x*x + y*y + z*z)
 
 def get_state(ap):
     return ap.params['channel'][0], ap.params['txpower'][0]
