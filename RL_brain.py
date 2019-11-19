@@ -126,7 +126,7 @@ class DeepQNetwork:
         # print transition
         # print type(r)
         # print r[0]
-        if r>=5:
+        if r>=0:
             index = self.memory_counter % self.memory_size
             self.memory[index, :] = transition
             self.memory_counter += 1
