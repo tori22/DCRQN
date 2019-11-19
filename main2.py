@@ -83,7 +83,7 @@ def caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4,
     apSet = [ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8]
     for station in stationSet:
         apIndex = rssi_tag(station)
-        stationPosition = station['position']
+        stationPosition = station.params['position']
 
         apPositive = apSet[apIndex]
         apPower = apPositive.params['txpower']
