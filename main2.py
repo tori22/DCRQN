@@ -208,6 +208,7 @@ def topology():
     except KeyboardInterrupt:
         print 'saving replayMemory...'
         brain.saveReplayMemory()
+        brain.plot_cost()
     pass
 
     print "*** Stopping network"

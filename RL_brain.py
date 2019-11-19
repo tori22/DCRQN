@@ -214,6 +214,7 @@ class DeepQNetwork:
         plt.plot(np.arange(len(self.cost_his)), self.cost_his)
         plt.ylabel('Cost')
         plt.xlabel('training steps')
+        plt.savefig("cost.png")
         plt.show()
 
     def predict(self, observation):
