@@ -86,7 +86,7 @@ def caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4,
         stationPosition = station.params['position']
 
         apPositive = apSet[apIndex]
-        apPower = apPositive.params['txpower']
+        apPower = apPositive.params['txpower'][0]
         apPosition = apPositive.params['position']
         distance = getDistance(apPosition, stationPosition)
         channel = apPositive.params['channel'][0]
@@ -99,11 +99,11 @@ def caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4,
             channelNegative = apNegative.params['channel'][0]
             if channelNegative != channel:
                 continue
-            apNegativePower = apNegative.params['txpower']
+            apNegativePower = apNegative.params['txpower'][0]
             apNegativePosition = apNegative.params['position']
             distanceNegative = getDistance(apNegativePosition, stationPosition)
             interference = apNegativePower/distanceNegative
-        totalReward += apPower/distance / (0 + interference)
+        totalReward += apPower/distance / (10 + interference)
     return totalReward
 
 def getDistance(apPosition, stationPosition):
