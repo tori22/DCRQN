@@ -192,6 +192,7 @@ def topology():
         state.append(str(temp[1]))
     n_actions = len(state) * 2
     n_APs = len(state)
+    originState = state
     brain = DeepQNetwork(n_actions, n_APs, param_file= None)
     action, q_value = brain.choose_action(state)
     reward, nextstate = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, h1)
@@ -211,6 +212,12 @@ def topology():
         brain.plot_cost()
     pass
 
+    while True:
+        action, q_value = brain.choose_action(originState)
+        reward, nextstate = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5,
+                                 sta6, sta7, sta8, h1)
+        originState = nextstate
+        print nextstate
     print "*** Stopping network"
     net.stop()
 
