@@ -57,17 +57,33 @@ def step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3
     apArray = [ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8]
     ap = apArray[apIndex]
     if channel_power_index == 0:
-        ap.setChannel(str(int(ap.params['channel'][0])+1), intf=ap.params['wlan'][0])
+        originChannel = int(ap.params['channel'][0])
+        if originChannel == 14:
+            ap.setChannel(1, intf=ap.params['wlan'][0])
+        else:
+            ap.setChannel(str(originChannel+1), intf=ap.params['wlan'][0])
         state[apIndex*2] = ap.params['channel'][0]
     elif channel_power_index == 1:
-        ap.setChannel(str(int(ap.params['channel'][0]) - 1), intf=ap.params['wlan'][0])
+        originChannel = int(ap.params['channel'][0])
+        if originChannel == 1:
+            ap.setChannel(14, intf=ap.params['wlan'][0])
+        else:
+            ap.setChannel(str(originChannel - 1), intf=ap.params['wlan'][0])
         state[apIndex * 2] = ap.params['channel'][0]
-    elif channel_power_index == 1:
-        ap.setTxPower(ap.params['txpower'][0] + 1, intf=ap.params['wlan'][0])
+    elif channel_power_index == 2:
+        originPower = int(ap.params['txpower'][0])
+        if originPower == 14:
+            ap.setTxPower(1, intf=ap.params['wlan'][0])
+        else:
+            ap.setTxPower(ap.params['txpower'][0] + 1, intf=ap.params['wlan'][0])
         # ap.setRange(ap.params['range']+1, intf=ap.params['wlan'][0])
         state[apIndex * 2 + 1] = ap.params['txpower'][0]
     else:
-        ap.setTxPower(ap.params['txpower'][0] - 1, intf=ap.params['wlan'][0])
+        originPower = int(ap.params['txpower'][0])
+        if originPower==1:
+            ap.setTxPower(14, intf=ap.params['wlan'][0])
+        else:
+            ap.setTxPower(ap.params['txpower'][0] - 1, intf=ap.params['wlan'][0])
         # ap.setRange(ap.params['range'] - 1, intf=ap.params['wlan'][0])
         state[apIndex * 2 + 1] = ap.params['txpower'][0]
 
