@@ -228,7 +228,7 @@ def topology():
     except KeyboardInterrupt:
         print 'saving replayMemory...'
         brain.saveReplayMemory()
-        #brain.plot_cost()
+        brain.plot_cost()
     pass
 
     while True:
