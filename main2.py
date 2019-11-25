@@ -53,6 +53,7 @@ def step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3
     apIndex = actionID / 4
     channel_power_index = actionID % 4
 
+    rewardorigin = caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8)
     apArray = [ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8]
     ap = apArray[apIndex]
     if channel_power_index == 0:
@@ -74,7 +75,9 @@ def step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3
     #           float(iperf([sta3, h1])), float(iperf([sta4, h1])),
     #           float(iperf([sta5, h1])), float(iperf([sta6, h1])),
     #           float(iperf([sta7, h1])), float(iperf([sta8, h1]))]
-    reward = caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8)
+    rewardnow = caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8)
+    reward = rewardnow - rewardorigin
+    print reward
     return reward, state
 
 def caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8):
@@ -209,7 +212,7 @@ def topology():
     except KeyboardInterrupt:
         print 'saving replayMemory...'
         brain.saveReplayMemory()
-        brain.plot_cost()
+        #brain.plot_cost()
     pass
 
     while True:
@@ -217,7 +220,8 @@ def topology():
         reward, nextstate = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5,
                                  sta6, sta7, sta8, h1)
         originState = nextstate
-        print nextstate
+        print reward
+        print originState
     print "*** Stopping network"
     net.stop()
 

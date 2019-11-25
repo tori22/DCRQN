@@ -208,14 +208,18 @@ class DeepQNetwork:
         # increasing epsilon
         self.epsilon = self.epsilon + self.epsilon_increment if self.epsilon < self.epsilon_max else self.epsilon_max
         self.learn_step_counter += 1
+        
+        print "cost: " + str(self.cost)
 
     def plot_cost(self):
+        import matplotlib as mpl
+        mpl.use('Agg')
         import matplotlib.pyplot as plt
         plt.plot(np.arange(len(self.cost_his)), self.cost_his)
         plt.ylabel('Cost')
         plt.xlabel('training steps')
-        plt.savefig("cost.png")
-        plt.show()
+        plt.savefig("./cost.png")
+        #plt.show()
 
     def predict(self, observation):
         """
