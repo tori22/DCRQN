@@ -122,7 +122,7 @@ def caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4,
             apNegativePosition = apNegative.params['position']
             distanceNegative = getDistance(apNegativePosition, stationPosition)
             interference = apNegativePower/distanceNegative
-        totalReward += apPower/distance / (10 + interference)
+        totalReward += apPower/distance / (1 + interference)
     return totalReward
 
 def getDistance(apPosition, stationPosition):
