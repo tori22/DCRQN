@@ -94,7 +94,7 @@ def step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3
     rewardnow = caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8)
     reward = rewardnow - rewardorigin
     print reward
-    return reward, state
+    return reward, state, rewardnow
 
 def caculate(sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8):
     totalReward = 0
@@ -214,7 +214,7 @@ def topology():
     originState = state
     brain = DeepQNetwork(n_actions, n_APs, param_file= None)
     action, q_value = brain.choose_action(state)
-    reward, nextstate = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, h1)
+    reward, nextstate, rewardnow = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, h1)
 
     second = sleeptime(0, 0, 1)
 
@@ -222,7 +222,7 @@ def topology():
         while True:
             time.sleep(second)
             action, q_value = brain.choose_action(state)
-            reward, nextstate = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, h1)
+            reward, nextstate, rewardnow = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, h1)
             brain.setPerception(state, action, reward, nextstate)
             state = nextstate
     except KeyboardInterrupt:
@@ -233,10 +233,10 @@ def topology():
 
     while True:
         action, q_value = brain.choose_action(originState)
-        reward, nextstate = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5,
+        reward, nextstate, rewardnow = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5,
                                  sta6, sta7, sta8, h1)
         originState = nextstate
-        print reward
+        print 'reward: ' + str(rewardnow)
         print originState
     print "*** Stopping network"
     net.stop()
