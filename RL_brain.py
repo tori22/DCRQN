@@ -5,6 +5,10 @@ Using Tensorflow to build the neural network.
 Using:
 Tensorflow: 1.0
 """
+
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
 from collections import deque
 import numpy as np
 import pandas as pd
@@ -212,13 +216,11 @@ class DeepQNetwork:
         print "cost: " + str(self.cost)
 
     def plot_cost(self):
-        import matplotlib as mpl
-        mpl.use('Agg')
-        import matplotlib.pyplot as plt
-        plt.plot(np.arange(len(self.cost_his)), self.cost_his)
-        plt.ylabel('Cost')
-        plt.xlabel('training steps')
-        plt.savefig("/home/f406/wangyingCode/DCRQN/saved_networks/cost.png")
+        #plt.plot(np.arange(len(self.cost_his)), self.cost_his)
+        np.savetxt("./a.txt",self.cost_his,fmt='%f',delimiter=',')
+        #plt.ylabel('Cost')
+        #plt.xlabel('training steps')
+        #plt.savefig("/home/f406/wangyingCode/DCRQN/saved_networks/cost.png")
         #plt.show()
 
     def predict(self, observation):
