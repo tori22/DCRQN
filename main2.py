@@ -231,13 +231,19 @@ def topology():
         brain.plot_cost()
     pass
 
-    while True:
-        action, q_value = brain.choose_action(originState)
-        reward, nextstate, rewardnow = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5,
-                                 sta6, sta7, sta8, h1)
-        originState = nextstate
-        print 'reward: ' + str(rewardnow)
-        print originState
+    rewardresults=[]
+    try:
+        while True:
+            action, q_value = brain.choose_action(originState)
+            reward, nextstate, rewardnow = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5,
+                                     sta6, sta7, sta8, h1)
+            originState = nextstate
+            print 'reward: ' + str(rewardnow)
+            print originState
+            rewardresults.append(rewardnow)
+    except KeyboardInterrupt:
+        print 'print reward...'
+        np.savetxt("./reward.txt", rewardresults, fmt='%f', delimiter=',')
     print "*** Stopping network"
     net.stop()
 
