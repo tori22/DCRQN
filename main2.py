@@ -218,17 +218,20 @@ def topology():
 
     second = sleeptime(0, 0, 1)
 
+    rewardtrain = []
     try:
         while True:
             time.sleep(second)
             action, q_value = brain.choose_action(state)
             reward, nextstate, rewardnow = step(state, action, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, sta1, sta2, sta3, sta4, sta5, sta6, sta7, sta8, h1)
             brain.setPerception(state, action, reward, nextstate)
+            rewardtrain.append(rewardnow)
             state = nextstate
     except KeyboardInterrupt:
         print 'saving replayMemory...'
         brain.saveReplayMemory()
         brain.plot_cost()
+        np.savetxt("./rewardtrain.txt", rewardtrain, fmt='%f', delimiter=',')
     pass
 
     rewardresults=[]
